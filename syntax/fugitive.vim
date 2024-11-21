@@ -27,15 +27,27 @@ syn match fugitiveSymbolicRef /\.\@!\%(\.\.\@!\|[^[:space:][:cntrl:]\:.]\)\+\.\@
 syn match fugitiveHash /^\x\{4,\}\S\@!/ contained containedin=@fugitiveSection
 syn match fugitiveHash /\S\@<!\x\{4,\}\S\@!/ contained
 
+syn match fugitiveDeletedFile /\%(^D \)\@<=.*$/ contained containedin=fugitiveStagedSection,fugitiveUnstagedSection
+
 syn region fugitiveHunk start=/^\%(@@\+ -\)\@=/ end=/^\%([A-Za-z?@]\|$\)\@=/ contains=diffLine,diffRemoved,diffAdded,diffNoEOL containedin=@fugitiveSection fold
 
 for s:section in ['Untracked', 'Unstaged', 'Staged']
   exe 'syn region fugitive' . s:section . 'Section start=/^\%(' . s:section . ' .*(\d\++\=)$\)\@=/ contains=fugitive' . s:section . 'Heading end=/^$/ fold'
   exe 'syn match fugitive' . s:section . 'Modifier /^[MADRCU?] / contained containedin=fugitive' . s:section . 'Section'
+  exe 'syn match fugitive' . s:section . 'ModifierDeleted   /^D/      contained containedin=fugitive' . s:section . 'Section'
+  exe 'syn match fugitive' . s:section . 'ModifierModified  /^M/      contained containedin=fugitive' . s:section . 'Section'
+  exe 'syn match fugitive' . s:section . 'ModifierAdded     /^A/      contained containedin=fugitive' . s:section . 'Section'
+  exe 'syn match fugitive' . s:section . 'ModifierRenamed   /^R/      contained containedin=fugitive' . s:section . 'Section'
+  exe 'syn match fugitive' . s:section . 'ModifierCopied    /^C/      contained containedin=fugitive' . s:section . 'Section'
+  exe 'syn match fugitive' . s:section . 'ModifierUnmerged  /^U/      contained containedin=fugitive' . s:section . 'Section'
+  exe 'syn match fugitive' . s:section . 'ModifierUntracked /^?/      contained containedin=fugitive' . s:section . 'Section'
   exe 'syn cluster fugitiveSection add=fugitive' . s:section . 'Section'
   exe 'syn match fugitive' . s:section . 'Heading /^[A-Z][a-z][^:]*\ze (\d\++\=)$/ contains=fugitivePreposition contained nextgroup=fugitiveCount skipwhite'
 endfor
 unlet s:section
+
+hi diffStrikethrough gui=strikethrough cterm=strikethrough
+hi def link fugitiveDeletedFile diffStrikethrough
 
 hi def link fugitiveHelpHeader fugitiveHeader
 hi def link fugitiveHeader Label
@@ -53,5 +65,22 @@ hi def link fugitiveStop Function
 hi def link fugitiveHash Identifier
 hi def link fugitiveSymbolicRef Function
 hi def link fugitiveCount Number
+
+
+hi def link fugitiveUnstagedModifierDeleted  diffRemoved
+hi def link fugitiveUnstagedModifierModified diffChanged
+hi def link fugitiveUnstagedModifierAdded    diffAdded
+hi def link fugitiveUnstagedModifierRenamed  diffChanged
+hi def link fugitiveUnstagedModifierCopied   diffAdded
+hi def link fugitiveUnstagedModifierUnmerged diffBDiffer
+
+hi def link fugitiveStagedModifierDeleted  diffRemoved
+hi def link fugitiveStagedModifierModified diffChanged
+hi def link fugitiveStagedModifierAdded    diffAdded
+hi def link fugitiveStagedModifierRenamed  diffChanged
+hi def link fugitiveStagedModifierCopied   diffAdded
+hi def link fugitiveStagedModifierUnmerged diffBDiffer
+
+hi def link fugitiveUntrackedModifierUntracked diffAdded
 
 let b:current_syntax = "fugitive"
