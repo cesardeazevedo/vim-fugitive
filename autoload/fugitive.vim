@@ -2977,9 +2977,9 @@ function! s:StatusRender(stat) abort
 
     call s:AddSection(to, 'Rebasing ' . rebasing_head, rebasing)
     call s:AddSection(to, get(get(sequencing, 0, {}), 'tous', '') ==# 'revert' ? 'Reverting' : 'Cherry Picking', sequencing)
-    call s:AddSection(to, 'Untracked', untracked)
-    call s:AddDiffSection(to, stat, 'Unstaged', unstaged)
     call s:AddDiffSection(to, stat, 'Staged', staged)
+    call s:AddDiffSection(to, stat, 'Unstaged', unstaged)
+    call s:AddSection(to, 'Untracked', untracked)
 
     let unique_push_ref = push_ref ==# pull_ref ? '' : push_ref
     let unpushed_push = s:QueryLogRange(unique_push_ref, head, dir)
